@@ -1,3 +1,8 @@
+<div id="installContainer" style="display: none; text-align: center; margin: 15px;">
+    <button id="btnInstall" class="btn-membership" style="background-color: #1e3a8a; width: auto; padding: 10px 20px;">
+        📲 تثبيت التطبيق 
+    </button>
+</div>
 // --- 1. الإعدادات والروابط الأساسية ---
 const scriptURL = 'https://script.google.com/macros/s/AKfycbzw5J0N-9jfK7GYIF11gdE-87j5d_txR3Lii6iHl15Hlf-SNfRMVOGgWSWMWgYk8jjkEQ/exec';
 let selectedSlots = []; 

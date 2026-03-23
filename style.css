@@ -166,8 +166,13 @@ h2 {
 
 
 
-.modal-content { background: white; margin: 10% auto; padding: 20px; width: 80%; max-width: 500px; border-radius: 10px; position: relative; }
-
+.modal-content {
+    width: 90%; /* تجعلها مرنة على الشاشات الصغيرة */
+    max-width: 500px; /* تمنعها من أن تصبح عريضة جداً على الكمبيوتر */
+    margin: 20px auto; /* لضمان توسطها وترك مسافة من الأعلى والأسفل */
+    border-radius: 12px;
+    overflow: hidden; /* لضمان عدم خروج المحتوى عن الحواف المنحنية */
+}
 
 
 .close { position: absolute; left: 20px; top: 10px; font-size: 28px; cursor: pointer; }

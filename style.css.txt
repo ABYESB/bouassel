@@ -1,0 +1,746 @@
+header-section {
+
+
+
+  display: flex;
+
+
+
+  flex-direction: column;
+
+
+
+  align-items: center; /* لتوسيط كل شيء في الوسط */
+
+
+
+  justify-content: center;
+
+
+
+  margin-bottom: 20px;
+
+
+
+}
+
+
+
+
+
+
+
+.main-logo {
+
+
+
+  width: 100px; /* تم تصغير الحجم كما طلبت */
+
+
+
+  height:auto;
+
+
+
+  margin-bottom: 15px;
+
+
+
+  display: block; /* لضمان التوسيط */
+
+
+
+}
+
+
+
+
+
+
+
+h2 {
+
+
+
+  color: #1e3a8a;
+
+
+
+  margin: 0;
+
+
+
+  font-size: 1.5em;
+
+
+
+  text-align: center;
+
+
+
+}
+
+
+
+/* تنسيق الحاوية التي تجمع الأزرار الثلاثة */
+
+.action-buttons { 
+
+  display: flex; 
+
+  justify-content: center; /* لتوسيط الأزرار في المنتصف */
+
+  align-items: center; 
+
+  flex-wrap: wrap; /* لضمان نزول الأزرار لسطر جديد في شاشات الهاتف الصغيرة */
+
+  gap: 10px; /* ترك مسافة متساوية بين الأزرار */
+
+  margin-bottom: 25px; 
+
+}
+
+
+
+/* توحيد حجم الأزرار لجعلها متوازية تماماً */
+
+.btn-info, .btn-map, .btn-video { 
+
+  padding: 12px 18px; 
+
+  border: none; 
+
+  border-radius: 8px; 
+
+  cursor: pointer; 
+
+  color: white; 
+
+  font-weight: bold; 
+
+  font-family: 'Cairo', sans-serif;
+
+  font-size: 0.9em;
+
+  transition: 0.3s;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  min-width: 160px; /* توحيد العرض الأدنى لتبدو متناسقة */
+
+}
+
+
+
+/* الألوان الخاصة بكل زر */
+
+.btn-info { background-color: #d97706; } /* برتقالي */
+
+.btn-map { background-color: #2563eb; }  /* أزرق */
+
+.btn-video { background-color: #7c3aed; } /* بنفسجي */
+
+
+
+/* تأثير الحركات عند تمرير الفأرة */
+
+.btn-info:hover, .btn-map:hover, .btn-video:hover {
+
+  transform: translateY(-3px); /* رفعة بسيطة للأعلى */
+
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+
+  opacity: 0.9;
+
+}
+
+/* تنسيق القوانين المخفية */
+
+
+
+.modal { display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); }
+
+
+
+.modal-content { background: white; margin: 10% auto; padding: 20px; width: 80%; max-width: 500px; border-radius: 10px; position: relative; }
+
+
+
+.close { position: absolute; left: 20px; top: 10px; font-size: 28px; cursor: pointer; }
+
+
+
+
+
+
+
+.week-navigation { display: flex; justify-content: center; align-items: center; gap: 20px; margin: 20px 0; background: #e0e7ff; padding: 10px; border-radius: 10px; }
+
+
+
+#dateDisplay { font-weight: bold; color: #1e3a8a; }
+
+
+
+
+
+
+
+table { width: 100%; border-collapse: collapse; font-size: 0.85em; }
+
+
+
+th, td { border: 1px solid #ddd; padding: 10px 5px; text-align: center; }
+
+
+
+th { background-color: #1e3a8a; color: white; }
+
+
+
+.slot { cursor: pointer; transition: 0.2s; background: #f9f9f9; }
+
+
+
+.selected { background-color: #22c55e !important; color: white; }
+
+
+
+
+
+
+
+
+
+
+
+```css
+
+
+
+.footer-section {
+
+
+
+  margin-top: 30px;
+
+
+
+  padding: 20px;
+
+
+
+  background-color: #f8fafc;
+
+
+
+  border-radius: 10px;
+
+
+
+  border-top: 3px solid #1e3a8a;
+
+
+
+  text-align: center;
+
+
+
+}
+
+
+
+
+
+
+
+.whatsapp-btn {
+
+
+
+  display: inline-flex;
+
+
+
+  align-items: center;
+
+
+
+  background-color: #25d366;
+
+
+
+  color: white;
+
+
+
+  padding: 10px 20px;
+
+
+
+  border-radius: 50px;
+
+
+
+  text-decoration: none;
+
+
+
+  font-weight: bold;
+
+
+
+  margin: 15px 0;
+
+
+
+  transition: 0.3s;
+
+
+
+  box-shadow: 0 4px 10px rgba(37, 211, 102, 0.3);
+
+
+
+}
+
+
+
+
+
+
+
+.whatsapp-btn:hover {
+
+
+
+  background-color: #1ebe57;
+
+
+
+  transform: scale(1.05);
+
+
+
+}
+
+
+
+
+
+
+
+.whatsapp-btn img {
+
+
+
+  width: 25px;
+
+
+
+  margin-left: 10px;
+
+
+
+}
+
+
+
+
+
+
+
+.social-links p {
+
+
+
+  margin: 5px 0;
+
+
+
+  color: #1e3a8a;
+
+
+
+}
+
+
+
+
+
+
+
+.copyright {
+
+
+
+  font-size: 0.8em;
+
+
+
+  color: #666;
+
+
+
+  margin-top: 15px;
+
+
+
+}
+
+body {
+
+    background: linear-gradient(rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.9)), 
+
+                url('https://images.unsplash.com/photo-1574629810360-7efbbe195018?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+
+    background-size: cover;
+
+    background-attachment: fixed;
+
+    background-position: center;
+
+    color: #333; /* لضمان وضوح النص الأسود */
+
+}
+
+
+
+/* إضافة تنسيق بسيط للشعار ليتوسط الصفحة بشكل أجمل */
+
+.header img {
+
+    max-width: 150px;
+
+    margin-bottom: 20px;
+
+}
+
+/* تنسيقات عامة لقسم المعرض */
+
+.field-gallery-container {
+
+    max-width: 900px;
+
+    margin: 50px auto;
+
+    padding: 20px;
+
+    background-color: rgba(255, 255, 255, 0.9);
+
+    border-radius: 15px;
+
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+
+}
+
+
+
+.gallery-title {
+
+    text-align: center;
+
+    color: #2c3e50;
+
+    margin-bottom: 30px;
+
+    font-size: 1.8rem;
+
+    font-weight: bold;
+
+}
+
+
+
+/* تنسيقات السلايدر (Swiper) */
+
+.swiper-container {
+
+    width: 100%;
+
+    height: 350px;
+
+    border-radius: 10px;
+
+    overflow: hidden;
+
+}
+
+
+
+.swiper-slide {
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: center;
+
+    align-items: center;
+
+    background: #fff;
+
+    font-size: 18px;
+
+    text-align: center;
+
+}
+
+
+
+.swiper-slide img {
+
+    max-width: 100%;
+
+    max-height: 280px;
+
+    object-fit: cover;
+
+    border-radius: 10px;
+
+}
+
+
+
+.slide-caption {
+
+    margin-top: 15px;
+
+    font-size: 1rem;
+
+    color: #555;
+
+    font-style: italic;
+
+}
+
+
+
+/* تنسيقات أزرار التنقل */
+
+.swiper-button-next, .swiper-button-prev {
+
+    color: #ffd700; /* لون ذهبي */
+
+}
+
+
+
+.swiper-pagination-bullet-active {
+
+    background: #ffd700;
+
+}
+/* إصلاح مشكلة السلايدر وتداخله مع الأزرار */
+.field-gallery-container {
+    position: relative;
+    z-index: 10;
+    margin-top: 40px !important; /* دفع السلايدر للأسفل ليبتعد عن الأزرار */
+    margin-bottom: 20px;
+    clear: both; /* منع التداخل مع العناصر العائمة */
+}
+
+.swiper-container {
+    width: 100%;
+    height: auto;
+    max-height: 400px;
+    overflow: hidden;
+    position: relative;
+}
+
+/* التأكد من أن النقاط الزرقاء تظهر في مكانها الصحيح أسفل السلايدر */
+.swiper-pagination {
+    position: absolute !important;
+    bottom: 5px !important;
+    z-index: 20;
+}
+
+/* التأكد من أن الأسهم الجانبية لا تخرج عن الإطار */
+.swiper-button-next, .swiper-button-prev {
+    top: 50% !important;
+    z-index: 20;
+}
+/* توسيط الشعار في منتصف الصفحة */
+.header-section, .header {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    width: 100%;
+}
+
+.main-logo, .header img {
+    display: block !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    max-width: 150px; /* يمكنك التحكم في الحجم من هنا */
+}
+/* تنسيق النافذة المنبثقة المخصصة */
+.custom-modal {
+  display: none; /* مخفية افتراضياً */
+  position: fixed;
+  z-index: 9999;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.6); /* خلفية معتمة */
+}
+
+.custom-modal-content {
+  background-color: #fefefe;
+  margin: 10% auto;
+  padding: 0;
+  border-radius: 15px;
+  width: 80%;
+  max-width: 500px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  overflow: hidden;
+  animation: modal-anim 0.4s ease-out;
+}
+
+/* حركة الدخول */
+@keyframes modal-anim {
+  from {transform: translateY(-50px); opacity: 0;}
+  to {transform: translateY(0); opacity: 1;}
+}
+
+.custom-close {
+  color: #fff;
+  position: absolute;
+  top: 15px;
+  right: 25px;
+  font-size: 30px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.custom-close:hover {
+  color: #ccc;
+}
+
+.modal-header {
+  background-color: #0d121c; /* لون داكن ليطابق تصميمك */
+  color: white;
+  padding: 20px;
+  text-align: center;
+  position: relative;
+}
+
+.modal-header h3 { margin: 0; font-size: 22px; }
+
+.modal-body ul {
+  list-style-type: none;
+  padding: 25px;
+  text-align: right;
+  direction: rtl;
+}
+
+.modal-body li {
+  font-size: 16px;
+  margin-bottom: 12px;
+  color: #333;
+}
+
+.price-tag {
+  background-color: #4CAF50;
+  color: white;
+  padding: 3px 10px;
+  border-radius: 5px;
+  font-weight: bold;
+  margin-right: 5px;
+}
+
+.modal-footer {
+  padding: 20px;
+  text-align: center;
+  background-color: #f1f1f1;
+}
+
+.modal-footer button {
+  background-color: #0d121c;
+  color: white;
+  border: none;
+  padding: 10px 30px;
+  border-radius: 25px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.modal-footer button:hover {
+  background-color: #1a253a;
+}
+.footer-buttons-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+    padding: 20px 10px;
+    border-top: 1px solid #ddd;
+    margin-top: 20px;
+}
+
+.footer-btn {
+    text-decoration: none;
+    padding: 10px 18px;
+    border-radius: 25px;
+    font-size: 14px;
+    font-weight: bold;
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.email-btn { background-color: #ea4335; } /* لون جوجل الأحمر */
+.facebook-btn { background-color: #1877f2; } /* لون فيسبوك الأزرق */
+.support-btn { background-color: #f39c12; } /* لون ذهبي للدعم */
+.admin-btn { background-color: #4b5563; } /* لون رمادي للمسؤول */
+
+.footer-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    opacity: 0.9;
+}
+.btn-membership {
+
+    background-color: #047857; /* لون أخضر مميز */
+    color: white;
+    border: none;
+    padding: 15px;
+    border-radius: 10px;
+    font-weight: bold;
+    cursor: pointer;
+    font-family: 'Cairo', sans-serif;
+ 
+}
+
+.action-buttons {
+    display: flex;          /* تفعيل خاصية الصف المرن */
+    flex-direction: row;    /* جعل العناصر في سطر واحد */
+    gap: 4px;              /* مسافة صغيرة جداً بين الأزرار */
+    padding: 10px 5px;      /* حشو جانبي بسيط */
+    width: 100%;            /* ملء عرض الشاشة */
+    box-sizing: border-box;
+}
+  /* تأثير الطفو لزر الانخراط عند وضع المؤشر عليه */
+.btn-membership:hover {
+    transform: translateY(-3px); /* رفعة بسيطة للأعلى */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15); /* إضافة ظل خفيف */
+    opacity: 0.9; /* تغميق اللون قليلاً لجذب الانتباه */
+}
+.button-class {
+    min-width: 150px; /* تحديد عرض أدنى موحد لجميع الأزرار */
+    text-align: center;
+}
+

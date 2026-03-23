@@ -1,0 +1,23 @@
+{
+  "short_name": "ABYES",
+  "name": "جمعية شباب بواصل للتربية والرياضة",
+  "icons": [
+    {
+      "src": "https://raw.githubusercontent.com/ABYESB/bouassel/main/logo.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://raw.githubusercontent.com/ABYESB/bouassel/main/logo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "start_url": "/bouassel/index.html",
+  "background_color": "#1e3a8a",
+  "theme_color": "#1e3a8a",
+  "display": "standalone",
+  "orientation": "portrait",
+  "scope": "/bouassel/",
+  "lang": "ar"
+}

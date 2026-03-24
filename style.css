@@ -544,10 +544,21 @@ body {
 .field-gallery-container {
     position: relative;
     z-index: 10;
-    margin-top: 40px !important; /* دفع السلايدر للأسفل ليبتعد عن الأزرار */
+    /* قم بتغيير القيمة من 40px إلى 5px أو 10px فقط */
+    margin-top: 10px !important; 
     margin-bottom: 20px;
-    clear: both; /* منع التداخل مع العناصر العائمة */
+    clear: both; 
 }
+/* تحسين المسافة داخل السلايدر نفسه */
+.swiper-slide img {
+    max-width: 100%;
+    /* تأكد من أن الصور لا تتقلص كثيراً */
+    height: auto; 
+    max-height: 350px; 
+    object-fit: cover;
+    border-radius: 10px;
+    /* إزالة أي هوامش تلقائية قد تدفع الصورة للأسفل */
+    margin: 0 auto;
 
 .swiper-container {
     width: 100%;

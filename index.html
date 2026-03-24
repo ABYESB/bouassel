@@ -1,38 +1,37 @@
-<div id="installContainer" style="display: none; text-align: center; margin: 15px;">
-    <button id="btnInstall" class="btn-membership" style="background-color: #1e3a8a; width: auto; padding: 10px 20px;">
-        📲 تثبيت التطبيق 
-    </button>
-</div>
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#1e3a8a">
-
-<script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('sw.js')
-        .then(reg => console.log('Service Worker Registered'))
-        .catch(err => console.log('Service Worker Failed', err));
-    });
-  }
-</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>جمعية شباب بوعسل للتربية والرياضة</title>
-    
+
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/png" href="logo-512.png">
+    <meta name="theme-color" content="#1e3a8a">
+
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('sw.js')
+            .then(reg => console.log('Service Worker Registered'))
+            .catch(err => console.log('Service Worker Failed', err));
+        });
+      }
+    </script>
+
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
-    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
-    
     <link rel="stylesheet" href="style.css">
 
     <script src="script.js" defer></script>
 </head>
 <body>
+    <div id="installContainer" style="display: none; text-align: center; margin: 15px;">
+        <button id="btnInstall" class="btn-membership" style="background-color: #1e3a8a; width: auto; padding: 10px 20px; color: white; border-radius: 5px; cursor: pointer;">
+            📲 تثبيت تطبيق ABYES
+        </button>
+    </div>
 
 <div class="app-container">
     <div class="header-section">

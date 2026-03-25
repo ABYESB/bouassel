@@ -120,20 +120,86 @@ th { background-color: #1e3a8a; color: white; }
 .slot { cursor: pointer; transition: 0.2s; background: #f9f9f9; }
 .selected { background-color: #22c55e !important; color: white; }
 
-/* 6. قسم المعرض والسلايدر (إصلاح التداخل) */
+/* 6. قسم المعرض والسلايدر (تنظيم احترافي جديد) */
 .field-gallery-container {
-    max-width: 900px;
-    margin: 20px auto !important;
-    padding: 20px;
-    background-color: rgba(255, 255, 255, 0.9);
-    border-radius: 15px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    max-width: 1000px; /* توسيع الحاوية قليلاً للمظهر الاحترافي */
+    margin: 40px auto !important;
+    padding: 15px;
+    background: #ffffff;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
     position: relative;
     z-index: 10;
-    clear: both;
 }
 
-.swiper-container { width: 100%; height: auto; border-radius: 10px; overflow: hidden; position: relative; }
+.gallery-title {
+    text-align: center;
+    margin-bottom: 25px;
+    color: #1e3a8a;
+    font-weight: bold;
+}
+
+/* ضبط حاوية السلايدر */
+.swiper-container { 
+    width: 100%; 
+    border-radius: 15px; 
+    overflow: hidden; 
+    position: relative;
+    background: #f0f2f5; /* لون خلفية خفيف في حالة كانت الصورة أصغر */
+}
+
+/* توحيد مقاس الصور ومنع التبعثر */
+.swiper-slide {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.swiper-slide img { 
+    width: 100%; 
+    height: 450px; /* ارتفاع مثالي للحواسيب */
+    object-fit: cover; /* أهم سطر لمنع التشوه */
+    display: block;
+}
+
+/* تحسين شكل نصوص الوصف أسفل الصور */
+.slide-caption {
+    width: 100%;
+    padding: 15px;
+    background: linear-gradient(transparent, rgba(0,0,0,0.8)); /* تدرج أسود خفيف */
+    color: white;
+    text-align: center;
+    position: absolute;
+    bottom: 0;
+    margin: 0;
+    font-size: 1.1rem;
+}
+
+/* أزرار التنقل - جعلها أكثر وضوحاً */
+.swiper-button-next, .swiper-button-prev { 
+    color: #ffffff !important; 
+    background: rgba(30, 58, 138, 0.5); /* خلفية زرقاء شفافة للأزرار */
+    width: 40px !important;
+    height: 40px !important;
+    border-radius: 50%;
+    after { font-size: 18px; } /* تصغير السهم قليلاً */
+}
+
+.swiper-pagination-bullet-active {
+    background: #1e3a8a !important;
+}
+
+/* ضبط خاص للهواتف لكي لا يتبعثر الجدول */
+@media (max-width: 768px) {
+    .swiper-slide img { 
+        height: 300px; /* تصغير الارتفاع في الهاتف */
+    }
+    .slide-caption {
+        font-size: 0.9rem;
+        padding: 10px;
+    }
+}
 
 
 /* لتأكيد التوسيط في الهواتف */

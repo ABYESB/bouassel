@@ -79,37 +79,35 @@ function initTable() {
     
     const daysArr = ["الاثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت", "الأحد"];
     
-    // عرض الشهر والسنة بناءً على منتصف الأسبوع
     let displayDate = new Date(currentStartDate);
     displayDate.setDate(displayDate.getDate() + 3); 
     dateDisplay.innerText = displayDate.toLocaleDateString('ar-MA', { month: 'long', year: 'numeric' });
 
-    // مصفوفة ثابتة لتخزين التواريخ السبعة لهذا الأسبوع
     let currentWeekDates = [];
     for (let i = 0; i < 7; i++) {
         let d = new Date(currentStartDate);
         d.setDate(d.getDate() + i); 
-        
         let fullDate = getFormattedDate(d);
         currentWeekDates.push({name: daysArr[i], date: fullDate}); 
         
-        // تعريف المحتوى هنا ليعمل في الأعلى والأسفل
         let cellContent = `${daysArr[i]}<br><small>${d.getDate()}</small>`;
-        
         headerRow.innerHTML += `<th>${cellContent}</th>`;
-        if (footerRow) {
-            footerRow.innerHTML += `<th>${cellContent}</th>`;
-        }
+        if (footerRow) footerRow.innerHTML += `<th>${cellContent}</th>`;
     }
 
     for (let hour = 8; hour <= 23; hour++) {
         let hLabel24 = `${hour}:00`; 
 
+        // تحديد ما إذا كان الوقت صباحاً أم مساءً
+        let suffix = (hour >= 12) ? "م" : "ص";
+        
         let displayHour = hour;
         if (hour > 12) displayHour = hour - 12; 
-        let hLabel12 = `${String(displayHour).padStart(2, '0')}:00`; 
+        
+        // إضافة الحرف (ص/م) بجانب الساعة
+        let hLabel12 = `${String(displayHour).padStart(2, '0')}:00 ${suffix}`; 
 
-        let row = `<tr><td style="background:#f0f2f5; font-weight:bold;">${hLabel12}</td>`;
+        let row = `<tr><td style="background:#f0f2f5; font-weight:bold; white-space: nowrap;">${hLabel12}</td>`;
         
         for (let day = 0; day < 7; day++) {
             if (daysArr[day] === "الأحد" && hour >= 8 && hour < 12) {
@@ -127,7 +125,6 @@ function initTable() {
     }
     loadExistingBookings();
 }
-
 // تشغيل السلايدر تلقائياً
 
 function initSwiper() {

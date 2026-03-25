@@ -93,43 +93,41 @@ function initTable() {
         let fullDate = getFormattedDate(d);
         currentWeekDates.push({name: daysArr[i], date: fullDate}); 
         
-        headerRow.innerHTML += `<th>${daysArr[i]}<br><small>${d.getDate()}</small></th>`;
+        // تعريف المحتوى هنا ليعمل في الأعلى والأسفل
+        let cellContent = `${daysArr[i]}<br><small>${d.getDate()}</small>`;
+        
+        headerRow.innerHTML += `<th>${cellContent}</th>`;
         if (footerRow) {
             footerRow.innerHTML += `<th>${cellContent}</th>`;
         }
     }
-    
 
     for (let hour = 8; hour <= 23; hour++) {
-    // 1. التنسيق البرمجي (يظل كما هو لضمان عمل جوجل والبحث)
-    let hLabel24 = `${hour}:00`; 
+        let hLabel24 = `${hour}:00`; 
 
-    // 2. التنسيق البصري (ما يراه المستخدم في الجدول)
-    let displayHour = hour;
-    let suffix = (hour >= 12) ? "م" : "ص"; // م للمساء و ص للصباح (اختياري)
-    
-    if (hour > 12) displayHour = hour - 12; // تحويل 13 إلى 1
-    let hLabel12 = `${String(displayHour).padStart(2, '0')}:00`; 
+        let displayHour = hour;
+        if (hour > 12) displayHour = hour - 12; 
+        let hLabel12 = `${String(displayHour).padStart(2, '0')}:00`; 
 
-    let row = `<tr><td style="background:#f0f2f5; font-weight:bold;">${hLabel12}</td>`;
-    
-    for (let day = 0; day < 7; day++) {
-        if (daysArr[day] === "الأحد" && hour >= 8 && hour < 12) {
-            row += `<td class="slot booked" style="background-color: #ef4444; color: white; pointer-events: none;">محجوز</td>`;
-        } else {
-            // لاحظ: نستخدم hLabel24 في data-hour ليبقى البحث دقيقاً في جوجل
-            row += `<td class="slot" 
-                        data-date="${currentWeekDates[day].date}" 
-                        data-day="${currentWeekDates[day].name}" 
-                        data-hour="${hLabel24}" 
-                        onclick="handleSlotSelection(this)">متاح</td>`;
+        let row = `<tr><td style="background:#f0f2f5; font-weight:bold;">${hLabel12}</td>`;
+        
+        for (let day = 0; day < 7; day++) {
+            if (daysArr[day] === "الأحد" && hour >= 8 && hour < 12) {
+                row += `<td class="slot booked" style="background-color: #ef4444; color: white; pointer-events: none;">محجوز</td>`;
+            } else {
+                row += `<td class="slot" 
+                            data-date="${currentWeekDates[day].date}" 
+                            data-day="${currentWeekDates[day].name}" 
+                            data-hour="${hLabel24}" 
+                            onclick="handleSlotSelection(this)">متاح</td>`;
+            }
         }
+        row += `</tr>`;
+        tableBody.innerHTML += row;
     }
-    row += `</tr>`;
-    tableBody.innerHTML += row;
-}
     loadExistingBookings();
 }
+
 // تشغيل السلايدر تلقائياً
 
 function initSwiper() {

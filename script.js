@@ -68,12 +68,14 @@ function loadExistingBookings() {
 function initTable() {
     const tableBody = document.getElementById('tableBody');
     const headerRow = document.getElementById('headerRow');
+    const footerRow = document.getElementById('footerRow');
     const dateDisplay = document.getElementById('dateDisplay');
     
     if (!tableBody || !headerRow) return;
 
     tableBody.innerHTML = '';
     headerRow.innerHTML = '<th>الساعة</th>';
+    if (footerRow) footerRow.innerHTML = '<th>الساعة</th>';
     
     const daysArr = ["الاثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت", "الأحد"];
     

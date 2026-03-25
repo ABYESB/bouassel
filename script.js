@@ -1,5 +1,5 @@
 // --- 1. الإعدادات والروابط الأساسية ---
-const scriptURL = 'https://script.google.com/macros/s/AKfycbzw5J0N-9jfK7GYIF11gdE-87j5d_txR3Lii6iHl15Hlf-SNfRMVOGgWSWMWgYk8jjkEQ/exec';
+const scriptURL = 'https://script.google.com/macros/s/AKfycbxh3ZHWiMtpnESTJ0UF8dZLpJK_zDNx8OQOL_mNvA5bXeuXwaDYJzjgChDRTKmK-b7SOg/exec';
 let selectedSlots = []; 
 
 // دالة ذكية تجلب تاريخ "الاثنين" للأسبوع الحالي مهما كان اليوم
@@ -345,10 +345,17 @@ window.onclick = function(event) {
 async function submitFinalBooking() {
     const name = document.getElementById('userName').value;
     const phone = document.getElementById('userPhone').value;
+    const btn = document.querySelector('.modal-footer button'); // الحصول على الزر لتعطيله
 
     if (!name || !phone) return alert("يرجى إكمال البيانات");
 
-    // 1. تلوين المربعات بالأحمر فوراً
+    // 1. تعطيل الزر فوراً لمنع التكرار (Anti-Double Click)
+    if(btn) {
+        btn.disabled = true;
+        btn.innerText = "جاري الحجز...";
+    }
+
+    // 2. تلوين المربعات بالأحمر فوراً (لإعطاء انطباع بالحجز اللحظي)
     selectedSlots.forEach(slot => {
         if (slot.element) {
             slot.element.innerText = "محجوز";
@@ -366,9 +373,7 @@ async function submitFinalBooking() {
     const bookingHours = tempSlots.map(s => s.hour).join(" و ");
     const myNumber = "212679399716";
 
-    closeBookingModal();
-
-    // رسالة الواتساب
+    // إعداد رسالة الواتساب
     const message = "⚽ *حجز جديد لملعب بوعسل* ⚽" + "%0A%0A" +
                     "*الاسم:* " + name + "%0A" +
                     "*الهاتف:* " + phone + "%0A" +
@@ -377,25 +382,41 @@ async function submitFinalBooking() {
                     "*الوقت:* " + bookingHours + "%0A%0A" +
                     "يرجى تأكيد الحجز من طرفكم.";
 
-    window.open("https://wa.me/" + myNumber + "?text=" + message, '_blank');
+    const whatsappURL = "https://wa.me/" + myNumber + "?text=" + message;
 
-    // 2. إرسال البيانات لجوجل (التعديل هنا)
+    // 3. إرسال البيانات لجوجل أولاً
     try {
-        for (let slot of tempSlots) {
+        const promises = tempSlots.map(slot => 
             fetch(scriptURL, {
                 method: 'POST',
                 mode: 'no-cors', 
                 body: JSON.stringify({ 
                     hour: slot.hour, 
                     date: slot.date, 
-                    dayName: slot.dayName, // <--- هذا هو السطر الناقص الذي سيصلح جدول جوجل
+                    dayName: slot.dayName,
                     name: name, 
                     phone: phone 
                 })
-            });
-        }
+            })
+        );
+
+        // انتظار انتهاء جميع عمليات الإرسال
+        await Promise.all(promises);
+
+        // 4. إغلاق النافذة وتفريغ الاختيارات
+        closeBookingModal();
+        selectedSlots = []; 
+
+        // 5. الانتقال للواتساب (استخدام window.location بدلاً من window.open لمنع التكرار)
+        window.location.href = whatsappURL;
+
     } catch (error) {
         console.error("خطأ في الخلفية:", error);
+        alert("حدث خطأ أثناء الحجز، يرجى المحاولة مرة أخرى.");
+        if(btn) {
+            btn.disabled = false;
+            btn.innerText = "تأكيد الحجز";
+        }
     }
 }
 

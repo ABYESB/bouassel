@@ -94,7 +94,11 @@ function initTable() {
         currentWeekDates.push({name: daysArr[i], date: fullDate}); 
         
         headerRow.innerHTML += `<th>${daysArr[i]}<br><small>${d.getDate()}</small></th>`;
+        if (footerRow) {
+            footerRow.innerHTML += `<th>${cellContent}</th>`;
+        }
     }
+    
 
     for (let hour = 8; hour <= 23; hour++) {
     // 1. التنسيق البرمجي (يظل كما هو لضمان عمل جوجل والبحث)

@@ -209,3 +209,65 @@ th { background-color: #1e3a8a; color: white; }
 #btnInstall { background: linear-gradient(135deg, #1e3a8a, #3b82f6); color: white; border: none; padding: 10px 20px; border-radius: 50px; cursor: pointer; font-weight: bold; }
 
 
+/* تنسيق أيقونة الواتساب الطافية */
+.whatsapp-float {
+    position: fixed;
+    width: 60px;
+    height: 60px;
+    bottom: 30px; /* المسافة من الأسفل */
+    right: 30px;  /* المسافة من اليمين */
+    background-color: #25d366; /* لون واتساب الرسمي */
+    color: #FFF;
+    border-radius: 50px;
+    text-align: center;
+    font-size: 35px;
+    box-shadow: 2px 5px 15px rgba(0,0,0,0.3);
+    z-index: 9999; /* لضمان ظهورها فوق كل شيء */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+/* تأثير عند تمرير الماوس */
+.whatsapp-float:hover {
+    transform: scale(1.1);
+    background-color: #128c7e;
+    color: #fff;
+}
+
+/* نص توضيحي صغير */
+.tooltip-text {
+    visibility: hidden;
+    width: 120px;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px;
+    position: absolute;
+    z-index: 1;
+    right: 125%; 
+    font-size: 14px;
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+}
+
+.whatsapp-float:hover .tooltip-text {
+    visibility: visible;
+    opacity: 1;
+}
+
+/* ضبط المقاس للهواتف */
+@media screen and (max-width: 768px) {
+    .whatsapp-float {
+        width: 50px;
+        height: 50px;
+        bottom: 20px;
+        right: 20px;
+        font-size: 30px;
+    }
+}
+

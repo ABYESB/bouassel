@@ -1,5 +1,5 @@
 // --- 1. الإعدادات والروابط الأساسية ---
-const scriptURL = 'https://script.google.com/macros/s/AKfycbxh3ZHWiMtpnESTJ0UF8dZLpJK_zDNx8OQOL_mNvA5bXeuXwaDYJzjgChDRTKmK-b7SOg/exec';
+const scriptURL = 'https://script.google.com/macros/s/AKfycbwLqAnOilOT8L92eIgdv4Chbaoc4UY_awAFnVYIarLM4l7GUA1dMwiVFLYx9tU0iesc/exec';
 let selectedSlots = []; 
 
 // دالة ذكية تجلب تاريخ "الاثنين" للأسبوع الحالي مهما كان اليوم
@@ -577,3 +577,11 @@ window.addEventListener('appinstalled', (evt) => {
     installContainer.style.display = 'none';
     console.log('App was successfully installed');
 });
+/* 1. الحل البرمجي: التحديث التلقائي لمنع تضارب الحجوزات */
+// يقوم هذا الكود بسؤال "جوجل شيت" عن أي حجز جديد كل 30 ثانية
+setInterval(() => {
+    console.log("جاري تحديث الحجوزات لتجنب التضارب بين المستخدمين...");
+    if (typeof loadExistingBookings === 'function') {
+        loadExistingBookings(); 
+    }
+}, 30000); // 30000 ميلي ثانية تعني 30 ثانية

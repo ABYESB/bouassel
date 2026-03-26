@@ -346,27 +346,14 @@ window.onclick = function(event) {
 async function submitFinalBooking() {
     const name = document.getElementById('userName').value;
     const phone = document.getElementById('userPhone').value;
-    const btn = document.querySelector('.modal-footer button'); // الحصول على الزر لتعطيله
+    const btn = document.querySelector('.modal-footer button'); 
 
     if (!name || !phone) return alert("يرجى إكمال البيانات");
 
-    // 1. تعطيل الزر فوراً لمنع التكرار (Anti-Double Click)
     if(btn) {
         btn.disabled = true;
-        btn.innerText = "جاري الحجز...";
+        btn.innerText = "جاري التحقق من التوفر...";
     }
-
-    // 2. تلوين المربعات بالأحمر فوراً (لإعطاء انطباع بالحجز اللحظي)
-    selectedSlots.forEach(slot => {
-        if (slot.element) {
-            slot.element.innerText = "محجوز";
-            slot.element.style.backgroundColor = "#ef4444";
-            slot.element.style.color = "white";
-            slot.element.style.pointerEvents = "none";
-            slot.element.classList.add("booked");
-            slot.element.classList.remove("selected");
-        }
-    });
 
     const tempSlots = [...selectedSlots]; 
     const dayName = tempSlots[0].dayName; 
@@ -374,7 +361,6 @@ async function submitFinalBooking() {
     const bookingHours = tempSlots.map(s => s.hour).join(" و ");
     const myNumber = "212679399716";
 
-    // إعداد رسالة الواتساب
     const message = "⚽ *حجز جديد لملعب بوعسل* ⚽" + "%0A%0A" +
                     "*الاسم:* " + name + "%0A" +
                     "*الهاتف:* " + phone + "%0A" +
@@ -385,12 +371,12 @@ async function submitFinalBooking() {
 
     const whatsappURL = "https://wa.me/" + myNumber + "?text=" + message;
 
-    // 3. إرسال البيانات لجوجل أولاً
     try {
-        const promises = tempSlots.map(slot => 
-            fetch(scriptURL, {
+        // تعديل: إرسال الحجوزات وفحص الردود فرداً فرداً
+        for (const slot of tempSlots) {
+            const response = await fetch(scriptURL, {
                 method: 'POST',
-                mode: 'no-cors', 
+                // تم حذف no-cors للسماح بقراءة رد جوجل (الحل الجذري)
                 body: JSON.stringify({ 
                     hour: slot.hour, 
                     date: slot.date, 
@@ -398,29 +384,52 @@ async function submitFinalBooking() {
                     name: name, 
                     phone: phone 
                 })
-            })
-        );
+            });
 
-        // انتظار انتهاء جميع عمليات الإرسال
-        await Promise.all(promises);
+            const result = await response.json();
+
+            if (result.result === "error") {
+                // إذا رفض جوجل الحجز المزدوج
+                alert("⚠️ " + result.message);
+                if (typeof loadExistingBookings === 'function') loadExistingBookings(); 
+                if(btn) {
+                    btn.disabled = false;
+                    btn.innerText = "تأكيد الحجز";
+                }
+                return; // توقف فوراً ولا تفتح الواتساب
+            }
+        }
+
+        // 2. تلوين المربعات بالأحمر (فقط بعد التأكد من النجاح)
+        tempSlots.forEach(slot => {
+            if (slot.element) {
+                slot.element.innerText = "محجوز";
+                slot.element.style.backgroundColor = "#ef4444";
+                slot.element.style.color = "white";
+                slot.element.style.pointerEvents = "none";
+                slot.element.classList.add("booked");
+                slot.element.classList.remove("selected");
+            }
+        });
 
         // 4. إغلاق النافذة وتفريغ الاختيارات
         closeBookingModal();
         selectedSlots = []; 
 
-        // 5. الانتقال للواتساب (استخدام window.location بدلاً من window.open لمنع التكرار)
+        // 5. الانتقال للواتساب (لن يصل هنا إلا إذا نجح الحجز في جوجل)
         window.location.href = whatsappURL;
 
     } catch (error) {
         console.error("خطأ في الخلفية:", error);
-        alert("حدث خطأ أثناء الحجز، يرجى المحاولة مرة أخرى.");
+        // تحديث الجدول للتأكد من الحالة الحقيقية للساعات
+        if (typeof loadExistingBookings === 'function') loadExistingBookings();
+        alert("حدث خطأ أو أن الوقت حجز للتو، يرجى مراجعة الجدول.");
         if(btn) {
             btn.disabled = false;
             btn.innerText = "تأكيد الحجز";
         }
     }
 }
-
 // دالة زر دعم الجمعية
 function showDonationInfo() {
     alert("شكراً لرغبتك في دعم جمعية شباب بوعسل!\n\nيمكنكم التواصل معنا عبر الهاتف أو البريد الإلكتروني لتنسيق الدعم المادي أو العيني.");

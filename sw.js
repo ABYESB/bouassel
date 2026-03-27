@@ -1,4 +1,4 @@
-const cacheName = 'bouassel-v1';
+const cacheName = 'bouassel-v1.2';
 const assets = [
   '/bouassel/',
   '/bouassel/index.html',
@@ -19,6 +19,16 @@ self.addEventListener('fetch', e => {
   e.respondWith(
     caches.match(e.request).then(res => {
       return res || fetch(e.request);
+    })
+  );
+});
+self.addEventListener('activate', e => {
+  e.waitUntil(
+    caches.keys().then(keys => {
+      return Promise.all(
+        keys.filter(key => key !== cacheName)
+            .map(key => caches.delete(key))
+      );
     })
   );
 });

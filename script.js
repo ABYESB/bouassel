@@ -359,24 +359,26 @@ async function submitFinalBooking() {
     const dayName = tempSlots[0].dayName; 
     const bookingDate = tempSlots[0].date;
     const bookingHours = tempSlots.map(s => s.hour).join(" و ");
-    const myNumber = "212632412959⁩";
+    
+    // --- التصحيح الجذري هنا ---
+    // 1. تنظيف الرقم من أي رموز مخفية أو فراغات
+    const myNumber = "212632412959"; 
 
-    const message = "⚽ *حجز جديد لملعب بوعسل* ⚽" + "%0A%0A" +
-                    "*الاسم:* " + name + "%0A" +
-                    "*الهاتف:* " + phone + "%0A" +
-                    "*اليوم:* " + dayName + "%0A" + 
-                    "*التاريخ:* " + bookingDate + "%0A" +
-                    "*الوقت:* " + bookingHours + "%0A%0A" +
-                    "يرجى تأكيد الحجز من طرفكم.";
+    // 2. استخدام encodeURIComponent لضمان عمل الرابط على جميع المتصفحات
+    const messageContent = `⚽ *حجز جديد لملعب بوعسل* ⚽\n\n` +
+                           `*الاسم:* ${name}\n` +
+                           `*الهاتف:* ${phone}\n` +
+                           `*اليوم:* ${dayName}\n` +
+                           `*التاريخ:* ${bookingDate}\n` +
+                           `*الوقت:* ${bookingHours}\n\n` +
+                           `يرجى تأكيد الحجز من طرفكم.`;
 
-    const whatsappURL = "https://wa.me/" + myNumber + "?text=" + message;
+    const whatsappURL = "https://wa.me/" + myNumber + "?text=" + encodeURIComponent(messageContent);
 
     try {
-        // تعديل: إرسال الحجوزات وفحص الردود فرداً فرداً
         for (const slot of tempSlots) {
             const response = await fetch(scriptURL, {
                 method: 'POST',
-                // تم حذف no-cors للسماح بقراءة رد جوجل (الحل الجذري)
                 body: JSON.stringify({ 
                     hour: slot.hour, 
                     date: slot.date, 
@@ -389,18 +391,16 @@ async function submitFinalBooking() {
             const result = await response.json();
 
             if (result.result === "error") {
-                // إذا رفض جوجل الحجز المزدوج
                 alert("⚠️ " + result.message);
                 if (typeof loadExistingBookings === 'function') loadExistingBookings(); 
                 if(btn) {
                     btn.disabled = false;
                     btn.innerText = "تأكيد الحجز";
                 }
-                return; // توقف فوراً ولا تفتح الواتساب
+                return; 
             }
         }
 
-        // 2. تلوين المربعات بالأحمر (فقط بعد التأكد من النجاح)
         tempSlots.forEach(slot => {
             if (slot.element) {
                 slot.element.innerText = "محجوز";
@@ -412,16 +412,14 @@ async function submitFinalBooking() {
             }
         });
 
-        // 4. إغلاق النافذة وتفريغ الاختيارات
         closeBookingModal();
         selectedSlots = []; 
 
-        // 5. الانتقال للواتساب (لن يصل هنا إلا إذا نجح الحجز في جوجل)
-        window.location.href = whatsappURL;
+        // استخدام window.open لفتح الواتساب في نافذة جديدة وضمان عدم تعليق الموقع
+        window.open(whatsappURL, '_blank');
 
     } catch (error) {
         console.error("خطأ في الخلفية:", error);
-        // تحديث الجدول للتأكد من الحالة الحقيقية للساعات
         if (typeof loadExistingBookings === 'function') loadExistingBookings();
         alert("حدث خطأ أو أن الوقت حجز للتو، يرجى مراجعة الجدول.");
         if(btn) {

@@ -79,14 +79,16 @@ function initTable() {
     
     const daysArr = ["الاثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت", "الأحد"];
     
-    let displayDate = new Date(currentStartDate);
-    displayDate.setDate(displayDate.getDate() + 3); 
+    // عرض الشهر والسنة بناءً على تاريخ بداية الأسبوع الحالي
+    let displayDate = new Date(currentStartDate.getTime());
     dateDisplay.innerText = displayDate.toLocaleDateString('ar-MA', { month: 'long', year: 'numeric' });
 
     let currentWeekDates = [];
     for (let i = 0; i < 7; i++) {
-        let d = new Date(currentStartDate);
+        // الحل هنا: نستخدم getTime لضمان عدم حدوث إزاحة في الساعات تؤدي لتغير اليوم
+        let d = new Date(currentStartDate.getTime());
         d.setDate(d.getDate() + i); 
+        
         let fullDate = getFormattedDate(d);
         currentWeekDates.push({name: daysArr[i], date: fullDate}); 
         
@@ -98,19 +100,14 @@ function initTable() {
     for (let hour = 8; hour <= 23; hour++) {
         let hLabel24 = `${hour}:00`; 
 
-        // حساب الساعة الحالية والتالية بتنسيق 12 ساعة بدون أصفار
         let currentH = hour > 12 ? hour - 12 : hour;
         let nextH = (hour + 1) > 12 ? (hour + 1) - 12 : (hour + 1);
         
-        // تصحيح حالة الساعة 12
         if (hour === 12) currentH = 12;
         if ((hour + 1) === 12) nextH = 12;
         if (hour === 0) currentH = 12;
 
-        // تحديد اللاحقة (ص/م) بناءً على الساعة الحالية
         let suffix = (hour >= 12) ? "م" : "ص";
-        
-        // شكل العرض الجديد: "8 إلى 9 ص"
         let hLabelRange = `${currentH} إلى ${nextH} ${suffix}`; 
 
         let row = `<tr><td style="background:#f0f2f5; font-weight:bold; white-space: nowrap; font-size: 0.85rem; padding: 5px;">${hLabelRange}</td>`;
@@ -119,8 +116,9 @@ function initTable() {
             if (daysArr[day] === "الأحد" && hour >= 8 && hour < 12) {
                 row += `<td class="slot booked" style="background-color: #ef4444; color: white; pointer-events: none;">محجوز</td>`;
             } else {
+                // نستخدم trim() للتأكد من عدم وجود مسافات مخفية في التاريخ
                 row += `<td class="slot" 
-                            data-date="${currentWeekDates[day].date}" 
+                            data-date="${currentWeekDates[day].date.trim()}" 
                             data-day="${currentWeekDates[day].name}" 
                             data-hour="${hLabel24}" 
                             onclick="handleSlotSelection(this)">متاح</td>`;
@@ -130,9 +128,8 @@ function initTable() {
         tableBody.innerHTML += row;
     }
     
-    if (typeof loadExistingBookings === "function") {
-        loadExistingBookings();
-    }
+    // استدعاء التحميل بعد بناء الجدول مباشرة
+    loadExistingBookings();
 }
 // تشغيل السلايدر تلقائياً
 

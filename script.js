@@ -359,7 +359,7 @@ async function submitFinalBooking() {
     const dayName = tempSlots[0].dayName; 
     const bookingDate = tempSlots[0].date;
     const bookingHours = tempSlots.map(s => s.hour).join(" و ");
-    const myNumber = "212632-412959⁩";
+    const myNumber = "212632412959⁩";
 
     const message = "⚽ *حجز جديد لملعب بوعسل* ⚽" + "%0A%0A" +
                     "*الاسم:* " + name + "%0A" +

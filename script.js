@@ -98,16 +98,22 @@ function initTable() {
     for (let hour = 8; hour <= 23; hour++) {
         let hLabel24 = `${hour}:00`; 
 
-        // تحديد ما إذا كان الوقت صباحاً أم مساءً
+        // حساب الساعة الحالية والتالية بتنسيق 12 ساعة بدون أصفار
+        let currentH = hour > 12 ? hour - 12 : hour;
+        let nextH = (hour + 1) > 12 ? (hour + 1) - 12 : (hour + 1);
+        
+        // تصحيح حالة الساعة 12
+        if (hour === 12) currentH = 12;
+        if ((hour + 1) === 12) nextH = 12;
+        if (hour === 0) currentH = 12;
+
+        // تحديد اللاحقة (ص/م) بناءً على الساعة الحالية
         let suffix = (hour >= 12) ? "م" : "ص";
         
-        let displayHour = hour;
-        if (hour > 12) displayHour = hour - 12; 
-        
-        // إضافة الحرف (ص/م) بجانب الساعة
-        let hLabel12 = `${String(displayHour).padStart(2, '0')}:00 ${suffix}`; 
+        // شكل العرض الجديد: "8 إلى 9 ص"
+        let hLabelRange = `${currentH} إلى ${nextH} ${suffix}`; 
 
-        let row = `<tr><td style="background:#f0f2f5; font-weight:bold; white-space: nowrap;">${hLabel12}</td>`;
+        let row = `<tr><td style="background:#f0f2f5; font-weight:bold; white-space: nowrap; font-size: 0.85rem; padding: 5px;">${hLabelRange}</td>`;
         
         for (let day = 0; day < 7; day++) {
             if (daysArr[day] === "الأحد" && hour >= 8 && hour < 12) {
@@ -123,7 +129,10 @@ function initTable() {
         row += `</tr>`;
         tableBody.innerHTML += row;
     }
-    loadExistingBookings();
+    
+    if (typeof loadExistingBookings === "function") {
+        loadExistingBookings();
+    }
 }
 // تشغيل السلايدر تلقائياً
 

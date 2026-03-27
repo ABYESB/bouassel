@@ -177,7 +177,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function requestVideo() {
 
-    window.open("https://wa.me/212679399716?text=أريد تسجيل فيديو للمباراة", "_blank");
+    window.open("https://wa.me/212621403563?text=أريد تسجيل فيديو للمباراة", "_blank");
 
 }
 
@@ -359,7 +359,7 @@ async function submitFinalBooking() {
     const dayName = tempSlots[0].dayName; 
     const bookingDate = tempSlots[0].date;
     const bookingHours = tempSlots.map(s => s.hour).join(" و ");
-    const myNumber = "212679399716";
+    const myNumber = "212632-412959⁩";
 
     const message = "⚽ *حجز جديد لملعب بوعسل* ⚽" + "%0A%0A" +
                     "*الاسم:* " + name + "%0A" +

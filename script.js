@@ -1,5 +1,5 @@
 // --- 1. الإعدادات والروابط الأساسية ---
-const scriptURL = 'https://script.google.com/macros/s/AKfycbzadALY3afc74bOjz1p2sXcMJ49Zc6mpsmHY2gLYL_qz_JPpr8Mb8gi8zE0dotB2R_z5A/exec';
+const scriptURL = 'https://script.google.com/macros/s/AKfycbyWAedUQdrrDDwDP0QJHRF_YxJApNLsIwFsaO1avWp5znsWuJ8V491i0ABgWUF9x5JrUg/exec';
 let selectedSlots = []; 
 
 // دالة ذكية تجلب تاريخ "الاثنين" للأسبوع الحالي مهما كان اليوم

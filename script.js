@@ -352,15 +352,29 @@ window.onclick = function(event) {
 async function submitFinalBooking() {
     const name = document.getElementById('userName').value;
     const phone = document.getElementById('userPhone').value;
-    // تحديد زر التأكيد داخل المودال
     const btn = document.getElementById('finalConfirmBtn'); 
 
     if (!name || !phone) return alert("يرجى إكمال البيانات");
 
-    // --- بداية حالة الانتظار ---
+    // --- 1. إظهار نافذة الانتظار (تعديل النافذة الجديد) ---
+    const loadingOverlay = document.createElement("div");
+    loadingOverlay.id = "customLoadingOverlay";
+    loadingOverlay.innerHTML = `
+        <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+                    background: rgba(0,0,0,0.7); z-index: 9999; display: flex; 
+                    align-items: center; justify-content: center; direction: rtl;">
+            <div style="background: white; padding: 25px; border-radius: 15px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+                <div style="font-size: 2rem; margin-bottom: 10px;">⏳</div>
+                <div style="font-weight: bold; color: #333; font-size: 1.1rem;">جاري معالجة حجزك...</div>
+                <div style="color: #666; font-size: 0.9rem; margin-top: 5px;">يرجى الانتظار قليلاً قبل الانتقال للواتساب</div>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(loadingOverlay);
+
+    // تعطيل الزر ومنع الضغط المتكرر (دون تغيير النص)
     if(btn) {
-        btn.disabled = true; // منع الضغط المتكرر
-        btn.innerText = "⏳ جاري معالجة حجزك.. انتظر قليلاً";
+        btn.disabled = true;
         btn.style.opacity = "0.7";
     }
 
@@ -397,20 +411,23 @@ async function submitFinalBooking() {
             const result = await response.json();
 
             if (result.result === "error") {
+                // إزالة نافذة الانتظار في حال الخطأ
+                if (document.getElementById("customLoadingOverlay")) document.getElementById("customLoadingOverlay").remove();
+                
                 alert("⚠️ " + result.message);
                 if (typeof loadExistingBookings === 'function') loadExistingBookings(); 
                 
-                // إعادة الزر لحالته الأصلية عند حدوث خطأ (مثل وقت محجوز مسبقاً)
                 if(btn) {
                     btn.disabled = false;
-                    btn.innerText = "تأكيد الحجز";
                     btn.style.opacity = "1";
                 }
                 return; 
             }
         }
 
-        // تحويل المربعات للون الأحمر في الواجهة فور النجاح
+        // إزالة نافذة الانتظار عند النجاح
+        if (document.getElementById("customLoadingOverlay")) document.getElementById("customLoadingOverlay").remove();
+
         tempSlots.forEach(slot => {
             if (slot.element) {
                 slot.element.innerText = "محجوز";
@@ -422,22 +439,21 @@ async function submitFinalBooking() {
             }
         });
 
-        // إغلاق النافذة وتفريغ البيانات
         closeBookingModal();
         selectedSlots = []; 
 
-        // فتح الواتساب في نافذة جديدة
         window.open(whatsappURL, '_blank');
 
     } catch (error) {
+        // إزالة نافذة الانتظار في حال الخطأ التقني
+        if (document.getElementById("customLoadingOverlay")) document.getElementById("customLoadingOverlay").remove();
+        
         console.error("خطأ في الخلفية:", error);
         if (typeof loadExistingBookings === 'function') loadExistingBookings();
         alert("حدث خطأ في الاتصال، يرجى المحاولة مرة أخرى.");
         
-        // إعادة الزر لحالته الأصلية عند حدوث خطأ تقني
         if(btn) {
             btn.disabled = false;
-            btn.innerText = "تأكيد الحجز";
             btn.style.opacity = "1";
         }
     }

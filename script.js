@@ -187,6 +187,70 @@ function requestVideo() {
 
 }
 
+// دالة لتحديث نصوص المودال وفحص توفر ساعة إضافية تلقائياً
+function updateModalDetails() {
+    if (selectedSlots.length === 0) return;
+
+    // ترتيب الساعات المختارة
+    selectedSlots.sort((a, b) => parseInt(a.hour) - parseInt(b.hour));
+    
+    const firstSlot = selectedSlots[0];
+    const allHours = selectedSlots.map(s => s.hour).join(" و ");
+    
+    // تحديث النص الرئيسي في النافذة
+    document.getElementById('selectedDetails').innerText = `حجز يوم ${firstSlot.dayName}: ${firstSlot.date} الساعة ${allHours}`;
+
+    // --- منطق اقتراح الساعة التالية ---
+    const extraSlotContainer = document.getElementById('extraSlotContainer');
+    
+    // نقترح ساعة ثانية فقط إذا كان المستخدم اختار ساعة واحدة حتى الآن
+    if (selectedSlots.length === 1) {
+        const currentHourInt = parseInt(firstSlot.hour.split(':')[0]);
+        const nextHourInt = currentHourInt + 1;
+        const nextHourStr = nextHourInt + ":00";
+
+        // البحث عن الخانة التالية في الجدول (بناءً على التاريخ والساعة)
+        const nextSlotElement = document.querySelector(`[data-date="${firstSlot.date}"][data-hour="${nextHourStr}"]`);
+
+        // الشروط: الخانة موجودة، ليست محجوزة، وليست مختارة أصلاً، وقبل منتصف الليل
+        if (nextSlotElement && 
+            !nextSlotElement.classList.contains('booked') && 
+            !nextSlotElement.classList.contains('selected') && 
+            nextHourInt <= 23) {
+            
+            extraSlotContainer.style.display = "block";
+            // تخزين بيانات الساعة التالية في "dataset" الزر لاستخدامها عند الضغط
+            extraSlotContainer.dataset.nextHour = nextHourStr;
+        } else {
+            extraSlotContainer.style.display = "none";
+        }
+    } else {
+        // إخفاء الخيار إذا كان قد اختار ساعتين بالفعل
+        extraSlotContainer.style.display = "none";
+    }
+}
+
+// الدالة التي تنفذ عند الضغط على زر "نعم، أضف الساعة التالية"
+function addNextSlot() {
+    const nextHourStr = document.getElementById('extraSlotContainer').dataset.nextHour;
+    const firstSlot = selectedSlots[0];
+    
+    // العثور على العنصر في الجدول
+    const nextSlotElement = document.querySelector(`[data-date="${firstSlot.date}"][data-hour="${nextHourStr}"]`);
+
+    if (nextSlotElement) {
+        nextSlotElement.classList.add('selected');
+        selectedSlots.push({ 
+            hour: nextHourStr, 
+            date: firstSlot.date, 
+            element: nextSlotElement, 
+            dayName: firstSlot.dayName 
+        });
+        
+        // تحديث النافذة (سيؤدي هذا لإخفاء زر الإضافة وتحديث نص الساعات)
+        updateModalDetails();
+    }
+}
 
 
 // استبدل الدالة القديمة بهذه
@@ -603,67 +667,3 @@ setInterval(() => {
     }
 }, 30000); // 30000 ميلي ثانية تعني 30 ثانية
 
-// دالة لتحديث نصوص المودال وفحص توفر ساعة إضافية تلقائياً
-function updateModalDetails() {
-    if (selectedSlots.length === 0) return;
-
-    // ترتيب الساعات المختارة
-    selectedSlots.sort((a, b) => parseInt(a.hour) - parseInt(b.hour));
-    
-    const firstSlot = selectedSlots[0];
-    const allHours = selectedSlots.map(s => s.hour).join(" و ");
-    
-    // تحديث النص الرئيسي في النافذة
-    document.getElementById('selectedDetails').innerText = `حجز يوم ${firstSlot.dayName}: ${firstSlot.date} الساعة ${allHours}`;
-
-    // --- منطق اقتراح الساعة التالية ---
-    const extraSlotContainer = document.getElementById('extraSlotContainer');
-    
-    // نقترح ساعة ثانية فقط إذا كان المستخدم اختار ساعة واحدة حتى الآن
-    if (selectedSlots.length === 1) {
-        const currentHourInt = parseInt(firstSlot.hour.split(':')[0]);
-        const nextHourInt = currentHourInt + 1;
-        const nextHourStr = nextHourInt + ":00";
-
-        // البحث عن الخانة التالية في الجدول (بناءً على التاريخ والساعة)
-        const nextSlotElement = document.querySelector(`[data-date="${firstSlot.date}"][data-hour="${nextHourStr}"]`);
-
-        // الشروط: الخانة موجودة، ليست محجوزة، وليست مختارة أصلاً، وقبل منتصف الليل
-        if (nextSlotElement && 
-            !nextSlotElement.classList.contains('booked') && 
-            !nextSlotElement.classList.contains('selected') && 
-            nextHourInt <= 23) {
-            
-            extraSlotContainer.style.display = "block";
-            // تخزين بيانات الساعة التالية في "dataset" الزر لاستخدامها عند الضغط
-            extraSlotContainer.dataset.nextHour = nextHourStr;
-        } else {
-            extraSlotContainer.style.display = "none";
-        }
-    } else {
-        // إخفاء الخيار إذا كان قد اختار ساعتين بالفعل
-        extraSlotContainer.style.display = "none";
-    }
-}
-
-// الدالة التي تنفذ عند الضغط على زر "نعم، أضف الساعة التالية"
-function addNextSlot() {
-    const nextHourStr = document.getElementById('extraSlotContainer').dataset.nextHour;
-    const firstSlot = selectedSlots[0];
-    
-    // العثور على العنصر في الجدول
-    const nextSlotElement = document.querySelector(`[data-date="${firstSlot.date}"][data-hour="${nextHourStr}"]`);
-
-    if (nextSlotElement) {
-        nextSlotElement.classList.add('selected');
-        selectedSlots.push({ 
-            hour: nextHourStr, 
-            date: firstSlot.date, 
-            element: nextSlotElement, 
-            dayName: firstSlot.dayName 
-        });
-        
-        // تحديث النافذة (سيؤدي هذا لإخفاء زر الإضافة وتحديث نص الساعات)
-        updateModalDetails();
-    }
-}

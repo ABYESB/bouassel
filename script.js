@@ -191,63 +191,42 @@ function requestVideo() {
 
 // استبدل الدالة القديمة بهذه
 function handleSlotSelection(element) {
-    // 1. منع اختيار المحجوز مسبقاً
-    if (element.innerText === "محجوز" || element.classList.contains("booked")) {
-        return; 
-    }
+    if (element.innerText === "محجوز" || element.classList.contains("booked")) return; 
 
-    // 2. التحقق من حالة العنصر: هل هو مختار حالياً أم لا؟
     const isAlreadySelected = element.classList.contains('selected');
 
-    // 3. إذا كان المستخدم يحاول اختيار ساعة "جديدة" (ليست خضراء بعد)
     if (!isAlreadySelected) {
-        // منع الساعة الثالثة فوراً
         if (selectedSlots.length >= 2) {
             alert("⚠️ عذراً، لا يمكن حجز أكثر من ساعتين متتاليتين.");
-            return; // توقف تام هنا
+            return;
         }
-
-        // منع الساعات غير المتتالية
         if (selectedSlots.length === 1) {
             const firstSlot = selectedSlots[0];
             const firstHour = parseInt(firstSlot.hour.split(':')[0]);
             const currentHour = parseInt(element.getAttribute('data-hour').split(':')[0]);
             const currentDate = element.getAttribute('data-date');
-
             if (Math.abs(currentHour - firstHour) !== 1 || currentDate !== firstSlot.date) {
                 alert("عذراً، يجب اختيار ساعات متتالية وفي نفس اليوم.");
-                return; // توقف تام هنا
+                return;
             }
         }
     }
 
-    // 4. تنفيذ التغيير في الواجهة
     element.classList.toggle('selected');
     const date = element.getAttribute('data-date');
     const hour = element.getAttribute('data-hour');
-    // *** الحل الجديد: قراءة اسم اليوم من data-day مباشرة ***
     const dayName = element.getAttribute('data-day'); 
 
     if (element.classList.contains('selected')) {
-        // أضفنا البيانات الجديدة للمصفوفة لضمان دقتها عند الإرسال
         selectedSlots.push({ hour, date, element, dayName }); 
-        
-        // فتح النافذة
         document.getElementById('bookingModal').style.display = "block";
-        
-        // تحديث النص الظاهر للمستخدم
-        selectedSlots.sort((a, b) => parseInt(a.hour) - parseInt(b.hour));
-        const allHours = selectedSlots.map(s => s.hour).join(" و ");
-        document.getElementById('selectedDetails').innerText = `حجز يوم ${dayName}: ${date} الساعة ${allHours}`;
     } else {
-        // إزالة الساعة من المصفوفة إذا ألغى الاختيار
         selectedSlots = selectedSlots.filter(s => s.element !== element);
-        
-        // إذا أصبحت المصفوفة فارغة، أغلق النافذة تلقائياً
         if (selectedSlots.length === 0) {
             document.getElementById('bookingModal').style.display = "none";
         }
     }
+    updateModalDetails(); // تحديث النافذة وفحص الساعة التالية
 }
 
 // استبدل جميع نسخ closeBookingModal بهذه النسخة الواحدة فقط في نهاية الكود
@@ -356,7 +335,7 @@ async function submitFinalBooking() {
 
     if (!name || !phone) return alert("يرجى إكمال البيانات");
 
-    // --- 1. إظهار نافذة الانتظار (تعديل النافذة الجديد) ---
+    // --- 1. إظهار نافذة الانتظار ---
     const loadingOverlay = document.createElement("div");
     loadingOverlay.id = "customLoadingOverlay";
     loadingOverlay.innerHTML = `
@@ -372,13 +351,16 @@ async function submitFinalBooking() {
     `;
     document.body.appendChild(loadingOverlay);
 
-    // تعطيل الزر ومنع الضغط المتكرر (دون تغيير النص)
     if(btn) {
         btn.disabled = true;
         btn.style.opacity = "0.7";
     }
 
+    // تجهيز البيانات للحجز (ساعة واحدة أو ساعتين)
     const tempSlots = [...selectedSlots]; 
+    // ترتيب الساعات زمنياً لتبدو الرسالة منظمة
+    tempSlots.sort((a, b) => parseInt(a.hour) - parseInt(b.hour));
+    
     const dayName = tempSlots[0].dayName; 
     const bookingDate = tempSlots[0].date;
     const bookingHours = tempSlots.map(s => s.hour).join(" و ");
@@ -396,6 +378,7 @@ async function submitFinalBooking() {
     const whatsappURL = "https://wa.me/" + myNumber + "?text=" + encodeURIComponent(messageContent);
 
     try {
+        // حلقة تكرار لإرسال كل ساعة كطلب منفصل لجوجل شيت
         for (const slot of tempSlots) {
             const response = await fetch(scriptURL, {
                 method: 'POST',
@@ -411,12 +394,9 @@ async function submitFinalBooking() {
             const result = await response.json();
 
             if (result.result === "error") {
-                // إزالة نافذة الانتظار في حال الخطأ
                 if (document.getElementById("customLoadingOverlay")) document.getElementById("customLoadingOverlay").remove();
-                
                 alert("⚠️ " + result.message);
                 if (typeof loadExistingBookings === 'function') loadExistingBookings(); 
-                
                 if(btn) {
                     btn.disabled = false;
                     btn.style.opacity = "1";
@@ -425,9 +405,10 @@ async function submitFinalBooking() {
             }
         }
 
-        // إزالة نافذة الانتظار عند النجاح
+        // إزالة نافذة الانتظار عند نجاح جميع الطلبات
         if (document.getElementById("customLoadingOverlay")) document.getElementById("customLoadingOverlay").remove();
 
+        // تحديث شكل الخانات في الجدول إلى "محجوز"
         tempSlots.forEach(slot => {
             if (slot.element) {
                 slot.element.innerText = "محجوز";
@@ -439,19 +420,18 @@ async function submitFinalBooking() {
             }
         });
 
+        // إغلاق المودال وتنظيف القائمة
         closeBookingModal();
         selectedSlots = []; 
 
+        // فتح واتساب في نافذة جديدة
         window.open(whatsappURL, '_blank');
 
     } catch (error) {
-        // إزالة نافذة الانتظار في حال الخطأ التقني
         if (document.getElementById("customLoadingOverlay")) document.getElementById("customLoadingOverlay").remove();
-        
         console.error("خطأ في الخلفية:", error);
         if (typeof loadExistingBookings === 'function') loadExistingBookings();
         alert("حدث خطأ في الاتصال، يرجى المحاولة مرة أخرى.");
-        
         if(btn) {
             btn.disabled = false;
             btn.style.opacity = "1";
@@ -622,3 +602,68 @@ setInterval(() => {
         loadExistingBookings(); 
     }
 }, 30000); // 30000 ميلي ثانية تعني 30 ثانية
+
+// دالة لتحديث نصوص المودال وفحص توفر ساعة إضافية تلقائياً
+function updateModalDetails() {
+    if (selectedSlots.length === 0) return;
+
+    // ترتيب الساعات المختارة
+    selectedSlots.sort((a, b) => parseInt(a.hour) - parseInt(b.hour));
+    
+    const firstSlot = selectedSlots[0];
+    const allHours = selectedSlots.map(s => s.hour).join(" و ");
+    
+    // تحديث النص الرئيسي في النافذة
+    document.getElementById('selectedDetails').innerText = `حجز يوم ${firstSlot.dayName}: ${firstSlot.date} الساعة ${allHours}`;
+
+    // --- منطق اقتراح الساعة التالية ---
+    const extraSlotContainer = document.getElementById('extraSlotContainer');
+    
+    // نقترح ساعة ثانية فقط إذا كان المستخدم اختار ساعة واحدة حتى الآن
+    if (selectedSlots.length === 1) {
+        const currentHourInt = parseInt(firstSlot.hour.split(':')[0]);
+        const nextHourInt = currentHourInt + 1;
+        const nextHourStr = nextHourInt + ":00";
+
+        // البحث عن الخانة التالية في الجدول (بناءً على التاريخ والساعة)
+        const nextSlotElement = document.querySelector(`[data-date="${firstSlot.date}"][data-hour="${nextHourStr}"]`);
+
+        // الشروط: الخانة موجودة، ليست محجوزة، وليست مختارة أصلاً، وقبل منتصف الليل
+        if (nextSlotElement && 
+            !nextSlotElement.classList.contains('booked') && 
+            !nextSlotElement.classList.contains('selected') && 
+            nextHourInt <= 23) {
+            
+            extraSlotContainer.style.display = "block";
+            // تخزين بيانات الساعة التالية في "dataset" الزر لاستخدامها عند الضغط
+            extraSlotContainer.dataset.nextHour = nextHourStr;
+        } else {
+            extraSlotContainer.style.display = "none";
+        }
+    } else {
+        // إخفاء الخيار إذا كان قد اختار ساعتين بالفعل
+        extraSlotContainer.style.display = "none";
+    }
+}
+
+// الدالة التي تنفذ عند الضغط على زر "نعم، أضف الساعة التالية"
+function addNextSlot() {
+    const nextHourStr = document.getElementById('extraSlotContainer').dataset.nextHour;
+    const firstSlot = selectedSlots[0];
+    
+    // العثور على العنصر في الجدول
+    const nextSlotElement = document.querySelector(`[data-date="${firstSlot.date}"][data-hour="${nextHourStr}"]`);
+
+    if (nextSlotElement) {
+        nextSlotElement.classList.add('selected');
+        selectedSlots.push({ 
+            hour: nextHourStr, 
+            date: firstSlot.date, 
+            element: nextSlotElement, 
+            dayName: firstSlot.dayName 
+        });
+        
+        // تحديث النافذة (سيؤدي هذا لإخفاء زر الإضافة وتحديث نص الساعات)
+        updateModalDetails();
+    }
+}

@@ -38,3 +38,31 @@ self.addEventListener('fetch', e => {
     })
   );
 });
+// --- الجزء الخاص بالتعامل مع الإشعارات ---
+
+// 1. الاستماع لحدث الضغط على التنبيه
+self.addEventListener('notificationclick', function(event) {
+    event.notification.close(); // إغلاق التنبيه عند الضغط عليه
+
+    // فتح الموقع أو التركيز عليه إذا كان مفتوحاً بالفعل
+    event.waitUntil(
+        clients.matchAll({ type: 'window' }).then(windowClients => {
+            for (var i = 0; i < windowClients.length; i++) {
+                var client = windowClients[i];
+                if (client.url === '/' && 'focus' in client) {
+                    return client.focus();
+                }
+            }
+            if (clients.openWindow) {
+                return clients.openWindow('/bouassel/'); // تأكد من المسار الصحيح لموقعك
+            }
+        })
+    );
+});
+
+// 2. تحديث الكاش تلقائياً عند وجود نسخة جديدة (اختياري لكن مفيد)
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
+});

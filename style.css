@@ -176,3 +176,37 @@ th { background-color: var(--table-header) !important; color: white; }
     .action-buttons { flex-direction: column; }
     .btn-membership, .btn-info, .btn-map, .btn-video { width: 90%; }
 }
+/* تنسيقات إضافية لضمان ظهور الجدول */
+.hour-cell {
+    font-weight: bold;
+    white-space: nowrap;
+    font-size: 0.85rem;
+    padding: 5px;
+    background-color: var(--nav-bg) !important;
+    color: var(--text-color) !important;
+}
+
+.slot.past {
+    background-color: var(--border-color) !important;
+    color: var(--text-color) !important;
+    opacity: 0.3; /* جعل الحصص الماضية باهتة قليلاً */
+    cursor: not-allowed;
+    pointer-events: none;
+    font-size: 0.8rem;
+}
+
+.slot.booked {
+    background-color: #ef4444 !important;
+    color: white !important;
+    pointer-events: none;
+}
+
+/* حل مشكلة اختفاء الحدود في الوضع الداكن */
+table, th, td {
+    border: 1px solid var(--border-color) !important;
+    visibility: visible !important;
+}
+
+[data-theme="dark"] .slot {
+    background-color: var(--card-bg);
+}

@@ -1,45 +1,4 @@
 
-
-body {
-
-    background-color: var(--bg-color);
-
-    color: var(--text-color);
-
-    transition: 0.3s; /* انتقال ناعم بين الألوان */
-
-}
-
-
-
-/* تحديث العناصر لتستخدم المتغيرات */
-
-.container, .modal-content {
-
-    background-color: var(--card-bg);
-
-}
-
-
-
-th, td[style*="background:#f0f2f5"] {
-
-    background-color: var(--table-header) !important;
-
-    color: var(--text-color);
-
-}
-
-
-
-.slot {
-
-    background-color: var(--slot-available);
-
-    border: 1px solid var(--border-color);
-
-}
-
 /* 1. التنسيقات العامة والخلفية الأصلية */
 
 body {

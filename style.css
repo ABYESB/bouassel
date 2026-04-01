@@ -1,6 +1,42 @@
 
 
+/* الألوان الافتراضية (الوضع الفاتح) */
 
+:root {
+
+    --bg-color: #f8fafc;
+
+    --card-bg: #ffffff;
+
+    --text-color: #1e293b;
+
+    --table-header: #f0f2f5;
+
+    --slot-available: #ffffff;
+
+    --border-color: #e2e8f0;
+
+}
+
+
+
+/* ألوان الوضع الداكن */
+
+[data-theme="dark"] {
+
+    --bg-color: #0f172a;
+
+    --card-bg: #1e293b;
+
+    --text-color: #f1f5f9;
+
+    --table-header: #334155;
+
+    --slot-available: #1e293b;
+
+    --border-color: #475569;
+
+}
 
 body {
 

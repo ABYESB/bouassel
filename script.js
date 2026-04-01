@@ -79,23 +79,23 @@ function initTable() {
     
     const daysArr = ["الاثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت", "الأحد"];
     
-    // عرض الشهر والسنة بناءً على تاريخ بداية الأسبوع الحالي
     let displayDate = new Date(currentStartDate.getTime());
     dateDisplay.innerText = displayDate.toLocaleDateString('ar-MA', { month: 'long', year: 'numeric' });
 
     let currentWeekDates = [];
     for (let i = 0; i < 7; i++) {
-        // الحل هنا: نستخدم getTime لضمان عدم حدوث إزاحة في الساعات تؤدي لتغير اليوم
         let d = new Date(currentStartDate.getTime());
         d.setDate(d.getDate() + i); 
         
         let fullDate = getFormattedDate(d);
-        currentWeekDates.push({name: daysArr[i], date: fullDate}); 
+        currentWeekDates.push({name: daysArr[i], date: fullDate, rawDate: d}); 
         
         let cellContent = `${daysArr[i]}<br><small>${d.getDate()}</small>`;
         headerRow.innerHTML += `<th>${cellContent}</th>`;
         if (footerRow) footerRow.innerHTML += `<th>${cellContent}</th>`;
     }
+
+    const now = new Date(); // الوقت الحالي للمقارنة
 
     for (let hour = 8; hour <= 23; hour++) {
         let hLabel24 = `${hour}:00`; 
@@ -113,10 +113,16 @@ function initTable() {
         let row = `<tr><td style="background:#f0f2f5; font-weight:bold; white-space: nowrap; font-size: 0.85rem; padding: 5px;">${hLabelRange}</td>`;
         
         for (let day = 0; day < 7; day++) {
-            if (daysArr[day] === "الأحد" && hour >= 8 && hour < 12) {
+            // إنشاء كائن وقت للخانة الحالية للمقارنة
+            let slotTime = new Date(currentWeekDates[day].rawDate.getTime());
+            slotTime.setHours(hour, 0, 0, 0);
+
+            if (slotTime < now) {
+                // إذا كان الوقت قد مضى (سواء أيام سابقة أو ساعات مرت اليوم)
+                row += `<td class="slot past" style="background-color: #e5e7eb; color: #9ca3af; cursor: not-allowed; pointer-events: none; font-size: 0.8rem;">منتهي</td>`;
+            } else if (daysArr[day] === "الأحد" && hour >= 8 && hour < 12) {
                 row += `<td class="slot booked" style="background-color: #ef4444; color: white; pointer-events: none;">محجوز</td>`;
             } else {
-                // نستخدم trim() للتأكد من عدم وجود مسافات مخفية في التاريخ
                 row += `<td class="slot" 
                             data-date="${currentWeekDates[day].date.trim()}" 
                             data-day="${currentWeekDates[day].name}" 
@@ -128,56 +134,8 @@ function initTable() {
         tableBody.innerHTML += row;
     }
     
-    // استدعاء التحميل بعد بناء الجدول مباشرة
     loadExistingBookings();
 }
-// تشغيل السلايدر تلقائياً
-
-function initSwiper() {
-
-    if (typeof Swiper !== 'undefined') {
-
-        new Swiper('.swiper-container', {
-
-            loop: true,
-
-            autoplay: { 
-
-                delay: 3000, 
-
-                disableOnInteraction: false 
-
-            },
-
-            pagination: { 
-
-                el: '.swiper-pagination', 
-
-                clickable: true 
-
-            },
-
-        });
-
-    }
-
-}
-
-
-
-// استدعاء التشغيل عند فتح الصفحة
-
-document.addEventListener('DOMContentLoaded', () => {
-
-    initTable();
-
-    loadExistingBookings();
-
-    initSwiper(); // <--- تأكد من وجود هذا السطر هنا
-
-});
-
-
 
 // 7. دوال إضافية لتجنب الأخطاء
 

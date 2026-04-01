@@ -110,7 +110,7 @@ function initTable() {
         let suffix = (hour >= 12) ? "م" : "ص";
         let hLabelRange = `${currentH} إلى ${nextH} ${suffix}`; 
 
-        let row = `<tr><td style="background:#f0f2f5; font-weight:bold; white-space: nowrap; font-size: 0.85rem; padding: 5px;">${hLabelRange}</td>`;
+       let row = `<tr><td class="hour-cell" style="font-weight:bold; white-space: nowrap; font-size: 0.85rem; padding: 5px;">${hLabelRange}</td>`;
         
         for (let day = 0; day < 7; day++) {
             // إنشاء كائن وقت للخانة الحالية للمقارنة

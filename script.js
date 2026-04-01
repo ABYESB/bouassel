@@ -34,14 +34,18 @@ function handleData(bookings) {
         const slot = document.querySelector(`[data-date="${booking.date}"][data-hour="${booking.hour}"]`);
         
         if (slot) {
+            // التعديل: إزالة كلاس الماضي (إن وجد) لضمان ظهور اللون الأحمر بوضوح
+            slot.classList.remove("past");
+            
             slot.innerText = "محجوز";
             slot.style.backgroundColor = "#ef4444"; // اللون الأحمر
             slot.style.color = "white";
+            slot.style.opacity = "1"; // التأكد من أن الشفافية كاملة ليظهر الأحمر بوضوح
             
-            // هذا السطر هو الأهم: يمنع أي شخص من الضغط على المربع المحجوز نهائياً
+            // يمنع أي شخص من الضغط على المربع المحجوز نهائياً
             slot.style.pointerEvents = "none"; 
             
-            // إضافة كلاس للتمييز البرمجي إذا احتجنا له في التنسيق (CSS)
+            // إضافة كلاس للتمييز البرمجي
             slot.classList.add("booked");
         }
     });

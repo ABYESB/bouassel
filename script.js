@@ -65,6 +65,7 @@ function loadExistingBookings() {
 
 // 3. بناء الجدول وتحديثه (النسخة المصححة لضبط ترحيل الأيام)
 // 3. بناء الجدول وتحديثه (النسخة النهائية لحل مشكلة إزاحة الأيام)
+
 function initTable() {
     const tableBody = document.getElementById('tableBody');
     const headerRow = document.getElementById('headerRow');
@@ -95,7 +96,7 @@ function initTable() {
         if (footerRow) footerRow.innerHTML += `<th>${cellContent}</th>`;
     }
 
-    const now = new Date(); // الوقت الحالي للمقارنة
+    const now = new Date();
 
     for (let hour = 8; hour <= 23; hour++) {
         let hLabel24 = `${hour}:00`; 
@@ -110,16 +111,16 @@ function initTable() {
         let suffix = (hour >= 12) ? "م" : "ص";
         let hLabelRange = `${currentH} إلى ${nextH} ${suffix}`; 
 
-       let row = `<tr><td class="hour-cell" style="font-weight:bold; white-space: nowrap; font-size: 0.85rem; padding: 5px;">${hLabelRange}</td>`;
+        // استخدام الكلاس hour-cell بدلاً من اللون الثابت
+        let row = `<tr><td class="hour-cell" style="font-weight:bold; white-space: nowrap; font-size: 0.85rem; padding: 5px;">${hLabelRange}</td>`;
         
         for (let day = 0; day < 7; day++) {
-            // إنشاء كائن وقت للخانة الحالية للمقارنة
             let slotTime = new Date(currentWeekDates[day].rawDate.getTime());
             slotTime.setHours(hour, 0, 0, 0);
 
             if (slotTime < now) {
-                // إذا كان الوقت قد مضى (سواء أيام سابقة أو ساعات مرت اليوم)
-                row += `<td class="slot past" style="background-color: #e5e7eb; color: #9ca3af; cursor: not-allowed; pointer-events: none; font-size: 0.8rem;">منتهي</td>`;
+                // تعديل ألوان الخانات المنتهية لتناسب الوضع الداكن
+                row += `<td class="slot past" style="background-color: var(--border-color); color: var(--text-color); opacity: 0.4; cursor: not-allowed; pointer-events: none; font-size: 0.8rem;">منتهي</td>`;
             } else if (daysArr[day] === "الأحد" && hour >= 8 && hour < 12) {
                 row += `<td class="slot booked" style="background-color: #ef4444; color: white; pointer-events: none;">محجوز</td>`;
             } else {
@@ -136,7 +137,6 @@ function initTable() {
     
     loadExistingBookings();
 }
-
 // 7. دوال إضافية لتجنب الأخطاء
 
 function requestVideo() {

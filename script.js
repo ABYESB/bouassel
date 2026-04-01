@@ -682,3 +682,25 @@ async function scheduleNotification(bookingDate, bookingHour) {
     // --- 3. جدولة تنبيه قبل ساعة واحدة ---
     setReminder(1, `عجل يا بطل! تبقى ساعة واحدة فقط على انطلاق المباراة. ننتظرك في الملعب!`, 'reminder-1h');
 }
+
+const themeToggle = document.getElementById('theme-toggle');
+const currentTheme = localStorage.getItem('theme');
+
+// التحقق من الاختيار السابق
+if (currentTheme) {
+    document.documentElement.setAttribute('data-theme', currentTheme);
+    themeToggle.innerText = currentTheme === 'dark' ? '☀️' : '🌙';
+}
+
+themeToggle.addEventListener('click', () => {
+    let theme = document.documentElement.getAttribute('data-theme');
+    if (theme === 'dark') {
+        document.documentElement.setAttribute('data-theme', 'light');
+        localStorage.setItem('theme', 'light');
+        themeToggle.innerText = '🌙';
+    } else {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        localStorage.setItem('theme', 'dark');
+        themeToggle.innerText = '☀️';
+    }
+});

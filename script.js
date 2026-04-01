@@ -420,9 +420,7 @@ async function submitFinalBooking() {
         btn.style.opacity = "0.7";
     }
 
-    // تجهيز البيانات للحجز (ساعة واحدة أو ساعتين)
     const tempSlots = [...selectedSlots]; 
-    // ترتيب الساعات زمنياً لتبدو الرسالة منظمة
     tempSlots.sort((a, b) => parseInt(a.hour) - parseInt(b.hour));
     
     const dayName = tempSlots[0].dayName; 
@@ -442,7 +440,6 @@ async function submitFinalBooking() {
     const whatsappURL = "https://wa.me/" + myNumber + "?text=" + encodeURIComponent(messageContent);
 
     try {
-        // حلقة تكرار لإرسال كل ساعة كطلب منفصل لجوجل شيت
         for (const slot of tempSlots) {
             const response = await fetch(scriptURL, {
                 method: 'POST',
@@ -469,10 +466,8 @@ async function submitFinalBooking() {
             }
         }
 
-        // إزالة نافذة الانتظار عند نجاح جميع الطلبات
         if (document.getElementById("customLoadingOverlay")) document.getElementById("customLoadingOverlay").remove();
 
-        // تحديث شكل الخانات في الجدول إلى "محجوز"
         tempSlots.forEach(slot => {
             if (slot.element) {
                 slot.element.innerText = "محجوز";
@@ -484,11 +479,14 @@ async function submitFinalBooking() {
             }
         });
 
-        // إغلاق المودال وتنظيف القائمة
+        // --- الجزء الخاص بالتنبيهات ---
+        tempSlots.forEach(slot => {
+            scheduleNotification(slot.date, slot.hour);
+        });
+
         closeBookingModal();
         selectedSlots = []; 
 
-        // فتح واتساب في نافذة جديدة
         window.open(whatsappURL, '_blank');
 
     } catch (error) {
@@ -667,3 +665,62 @@ setInterval(() => {
     }
 }, 30000); // 30000 ميلي ثانية تعني 30 ثانية
 
+// دالة شاملة لجدولة 3 تنبيهات: فوري، قبل 5 ساعات، وقبل ساعة واحدة
+async function scheduleNotification(bookingDate, bookingHour) {
+    if (!("Notification" in window)) {
+        console.log("هذا المتصفح لا يدعم التنبيهات.");
+        return;
+    }
+
+    // طلب الإذن من المستخدم (يظهر مرة واحدة فقط)
+    const permission = await Notification.requestPermission();
+    if (permission !== "granted") return;
+
+    // --- تحويل بيانات الحجز إلى كائن وقت حقيقي ---
+    // التاريخ يأتي بتنسيق DD/MM/YYYY والساعة HH:00
+    const [day, month, year] = bookingDate.split('/');
+    const [hour] = bookingHour.split(':');
+    // ملاحظة: الشهور في JS تبدأ من 0 (يناير = 0)
+    const playTime = new Date(year, month - 1, day, parseInt(hour), 0, 0);
+    const now = new Date();
+
+    // --- 1. التنبيه الفوري (مباشرة بعد الضغط على زر الحجز) ---
+    navigator.serviceWorker.ready.then(reg => {
+        reg.showNotification("✅ تم الحجز بنجاح", {
+            body: `موعدك في ملعب بوعسل يوم ${bookingDate} الساعة ${bookingHour}. ننتظرك!`,
+            icon: "logo-512.png",
+            badge: "logo-512.png",
+            vibrate: [100, 50, 100],
+            tag: 'booking-confirmed' // يمنع تكرار الإشعار إذا ضغط مرتين
+        });
+    });
+
+    // --- دالة برمجية لجدولة التنبيهات المستقبلية ---
+    const setReminder = (hoursBefore, message, tag) => {
+        const notifyTime = new Date(playTime.getTime() - (hoursBefore * 60 * 60 * 1000));
+        
+        // نبرمج التنبيه فقط إذا كان وقته لم يفت بعد
+        if (notifyTime > now) {
+            const delay = notifyTime.getTime() - now.getTime();
+            
+            setTimeout(() => {
+                navigator.serviceWorker.ready.then(reg => {
+                    reg.showNotification("⚽ ملعب بوعسل", {
+                        body: message,
+                        icon: "logo-512.png",
+                        badge: "logo-512.png",
+                        vibrate: [200, 100, 200],
+                        tag: tag,
+                        requireInteraction: true // يبقى الإشعار ظاهراً حتى يغلقه المستخدم
+                    });
+                });
+            }, delay);
+        }
+    };
+
+    // --- 2. جدولة تنبيه قبل 5 ساعات ---
+    setReminder(5, `تذكير: تبقى 5 ساعات على موعد مباراتك اليوم (${bookingHour}). هل الفريق جاهز؟`, 'reminder-5h');
+
+    // --- 3. جدولة تنبيه قبل ساعة واحدة ---
+    setReminder(1, `عجل يا بطل! تبقى ساعة واحدة فقط على انطلاق المباراة. ننتظرك في الملعب!`, 'reminder-1h');
+}

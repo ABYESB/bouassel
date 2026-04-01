@@ -124,7 +124,11 @@ function initTable() {
 
             if (slotTime < now) {
                 // --- الحالة 1: ساعة مرت وانتهت (رمادي ميت) ---
-                row += `<td class="slot past" style="background-color: #f1f5f9; color: #cbd5e1; cursor: not-allowed; pointer-events: none; font-size: 0.8rem; border: 1px solid #ddd;">منتهي</td>`;
+                // تم إضافة data-date و data-hour هنا لتمكين التلوين الأحمر لاحقاً
+                row += `<td class="slot past" 
+                            data-date="${currentWeekDates[day].date.trim()}" 
+                            data-hour="${hLabel24}" 
+                            style="background-color: #f1f5f9; color: #cbd5e1; cursor: not-allowed; pointer-events: none; font-size: 0.8rem; border: 1px solid #ddd;">منتهي</td>`;
             } else if (daysArr[day] === "الأحد" && hour >= 8 && hour < 12) {
                 // --- الحالة 2: محجوز يدوياً (مثل يوم الأحد صباحاً) ---
                 row += `<td class="slot booked" style="background-color: #ef4444; color: white; pointer-events: none; border: 1px solid #ddd;">محجوز</td>`;
@@ -144,7 +148,6 @@ function initTable() {
     
     loadExistingBookings(); // جلب الحجوزات من جوجل شيت وتلوينها بالأحمر
 }
-
 // تشغيل السلايدر تلقائياً
 
 

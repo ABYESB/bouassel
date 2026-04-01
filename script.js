@@ -65,78 +65,228 @@ function loadExistingBookings() {
 
 // 3. بناء الجدول وتحديثه (النسخة المصححة لضبط ترحيل الأيام)
 // 3. بناء الجدول وتحديثه (النسخة النهائية لحل مشكلة إزاحة الأيام)
-
 function initTable() {
+
     const tableBody = document.getElementById('tableBody');
+
     const headerRow = document.getElementById('headerRow');
+
     const footerRow = document.getElementById('footerRow');
+
     const dateDisplay = document.getElementById('dateDisplay');
+
     
+
     if (!tableBody || !headerRow) return;
 
+
+
     tableBody.innerHTML = '';
+
     headerRow.innerHTML = '<th>الساعة</th>';
+
     if (footerRow) footerRow.innerHTML = '<th>الساعة</th>';
+
     
+
     const daysArr = ["الاثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت", "الأحد"];
+
     
+
+    // عرض الشهر والسنة بناءً على تاريخ بداية الأسبوع الحالي
+
     let displayDate = new Date(currentStartDate.getTime());
+
     dateDisplay.innerText = displayDate.toLocaleDateString('ar-MA', { month: 'long', year: 'numeric' });
 
+
+
     let currentWeekDates = [];
+
     for (let i = 0; i < 7; i++) {
+
+        // الحل هنا: نستخدم getTime لضمان عدم حدوث إزاحة في الساعات تؤدي لتغير اليوم
+
         let d = new Date(currentStartDate.getTime());
+
         d.setDate(d.getDate() + i); 
+
         
+
         let fullDate = getFormattedDate(d);
-        currentWeekDates.push({name: daysArr[i], date: fullDate, rawDate: d}); 
+
+        currentWeekDates.push({name: daysArr[i], date: fullDate}); 
+
         
+
         let cellContent = `${daysArr[i]}<br><small>${d.getDate()}</small>`;
+
         headerRow.innerHTML += `<th>${cellContent}</th>`;
+
         if (footerRow) footerRow.innerHTML += `<th>${cellContent}</th>`;
+
     }
 
-    const now = new Date(); // الوقت الحالي للمقارنة
+
 
     for (let hour = 8; hour <= 23; hour++) {
+
         let hLabel24 = `${hour}:00`; 
 
+
+
         let currentH = hour > 12 ? hour - 12 : hour;
+
         let nextH = (hour + 1) > 12 ? (hour + 1) - 12 : (hour + 1);
+
         
+
         if (hour === 12) currentH = 12;
+
         if ((hour + 1) === 12) nextH = 12;
+
         if (hour === 0) currentH = 12;
 
+
+
         let suffix = (hour >= 12) ? "م" : "ص";
+
         let hLabelRange = `${currentH} إلى ${nextH} ${suffix}`; 
 
-        let row = `<tr><td style="background:#f0f2f5; font-weight:bold; white-space: nowrap; font-size: 0.85rem; padding: 5px;">${hLabelRange}</td>`;
-        
-        for (let day = 0; day < 7; day++) {
-            // إنشاء كائن وقت للخانة الحالية للمقارنة
-            let slotTime = new Date(currentWeekDates[day].rawDate.getTime());
-            slotTime.setHours(hour, 0, 0, 0);
 
-            if (slotTime < now) {
-                // إذا كان الوقت قد مضى (سواء أيام سابقة أو ساعات مرت اليوم)
-                row += `<td class="slot past" style="background-color: #e5e7eb; color: #9ca3af; cursor: not-allowed; pointer-events: none; font-size: 0.8rem;">منتهي</td>`;
-            } else if (daysArr[day] === "الأحد" && hour >= 8 && hour < 12) {
+
+        let row = `<tr><td style="background:#f0f2f5; font-weight:bold; white-space: nowrap; font-size: 0.85rem; padding: 5px;">${hLabelRange}</td>`;
+
+        
+
+        for (let day = 0; day < 7; day++) {
+
+            if (daysArr[day] === "الأحد" && hour >= 8 && hour < 12) {
+
                 row += `<td class="slot booked" style="background-color: #ef4444; color: white; pointer-events: none;">محجوز</td>`;
+
             } else {
+
+                // نستخدم trim() للتأكد من عدم وجود مسافات مخفية في التاريخ
+
                 row += `<td class="slot" 
+
                             data-date="${currentWeekDates[day].date.trim()}" 
+
                             data-day="${currentWeekDates[day].name}" 
+
                             data-hour="${hLabel24}" 
+
                             onclick="handleSlotSelection(this)">متاح</td>`;
+
             }
+
         }
+
         row += `</tr>`;
+
         tableBody.innerHTML += row;
+
     }
+
     
+
+    // استدعاء التحميل بعد بناء الجدول مباشرة
+
     loadExistingBookings();
+
 }
+
+// تشغيل السلايدر تلقائياً
+
+
+
+function initSwiper() {
+
+
+
+    if (typeof Swiper !== 'undefined') {
+
+
+
+        new Swiper('.swiper-container', {
+
+
+
+            loop: true,
+
+
+
+            autoplay: { 
+
+
+
+                delay: 3000, 
+
+
+
+                disableOnInteraction: false 
+
+
+
+            },
+
+
+
+            pagination: { 
+
+
+
+                el: '.swiper-pagination', 
+
+
+
+                clickable: true 
+
+
+
+            },
+
+
+
+        });
+
+
+
+    }
+
+
+
+}
+
+
+
+
+
+
+
+// استدعاء التشغيل عند فتح الصفحة
+
+
+
+document.addEventListener('DOMContentLoaded', () => {
+
+
+
+    initTable();
+
+
+
+    loadExistingBookings();
+
+
+
+    initSwiper(); // <--- تأكد من وجود هذا السطر هنا
+
+
+
+})
+
 // 7. دوال إضافية لتجنب الأخطاء
 
 function requestVideo() {
